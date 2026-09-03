@@ -1,0 +1,53 @@
+{# Icon paths ported verbatim from indienodes-app's TypeIcon.svelte — same
+   glyph per type as the rest of IndieNodes uses, so a creator page's type
+   badge reads as the same mark a visitor has already seen on the ring. #}
+{% set typeIcons = {
+	audio: ["M9 17V5l10-2v12", "M6.5 17m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0", "M16.5 15m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0"],
+	comic: ["M4 5h16v11H10l-4.5 3.5V5Z", "M8 9.5h8M8 12.5h5"],
+	text: ["M6 3.5h8.5L19 8v12.5H6Z", "M14 3.5V8h5", "M9 12h7M9 15.5h7M9 19h4"],
+	art: ["M4 4.5h16v15H4Z", "m5 16.5 4.5-5.5 3 3.5 3-4 3.5 6", "M9 8.5m-1.6 0a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0"],
+	game: ["M7.5 7.5h9a5.5 5.5 0 0 1 0 11h-9a5.5 5.5 0 0 1 0-11Z", "M10 11v3.5M8.25 12.75h3.5", "M16 12m-1.1 0a1.1 1.1 0 1 0 2.2 0a1.1 1.1 0 1 0 -2.2 0", "M18 14.5m-1.1 0a1.1 1.1 0 1 0 2.2 0a1.1 1.1 0 1 0 -2.2 0"]
+} %}
+{% set typeLabels = { audio: "Music", comic: "Comic", text: "Text", game: "Game", art: "Art" } %}
+
+<header class="hero">
+	{% if creator.theme.backgroundImage %}
+		<div
+			class="hero__backdrop"
+			style="background-image: url('{{ creator.theme.backgroundImage }}')"
+			aria-hidden="true"
+		></div>
+	{% endif %}
+	<div class="hero__inner" data-reveal="sequence">
+		{% if creator.thumb_url %}
+			<img
+				class="hero__portrait"
+				data-reveal-item
+				src="{{ creator.thumb_url }}"
+				alt=""
+				width="152"
+				height="152"
+				loading="eager"
+			/>
+		{% endif %}
+		<div class="hero__body">
+			<span class="type-badge" data-reveal-item>
+				<svg viewBox="0 0 24 24" aria-hidden="true">
+					{% for d in typeIcons[creator.type] %}
+						<path d="{{ d }}" />
+					{% endfor %}
+				</svg>
+				{{ typeLabels[creator.type] }}
+			</span>
+			<h1 class="hero__name" data-reveal-item>{{ creator.creator }}</h1>
+			<p class="hero__why" data-reveal-item>{{ creator.why }}</p>
+			{% if creator.tags and creator.tags.length %}
+				<ul class="tags" data-reveal-item>
+					{% for tag in creator.tags %}
+						<li>{{ tag }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		</div>
+	</div>
+</header>

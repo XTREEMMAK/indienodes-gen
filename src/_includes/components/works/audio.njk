@@ -1,0 +1,16 @@
+<section class="section" aria-labelledby="works-heading" data-reveal="sequence">
+	<h2 class="section__heading" id="works-heading" data-reveal-item>Selected tracks</h2>
+	{% for track in creator.tracks | capped(3) %}
+		<div class="work work--audio" data-reveal-item>
+			<p class="work__label">{{ track.label }}</p>
+			<audio controls preload="none" src="{{ track.media_url }}">
+				<a href="{{ track.media_url }}">{{ track.label }} (download)</a>
+			</audio>
+		</div>
+	{% else %}
+		{# An audio entry with no tracks is a deliberate, supported shape in the
+		   ring — a link-only member, listed with a cover and a link out but
+		   not playable here. Say so rather than rendering an empty heading. #}
+		<p class="prose" data-reveal-item>No tracks are hosted here yet — see Elsewhere below.</p>
+	{% endfor %}
+</section>

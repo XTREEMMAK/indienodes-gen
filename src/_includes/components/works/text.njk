@@ -1,0 +1,17 @@
+{# excerpts[] has two shapes in the ring schema: an object ({title?, text,
+   audio_url?}) or a bare legacy string. Both are handled here rather than
+   assuming every record has already been normalized. #}
+<section class="section" aria-labelledby="works-heading" data-reveal="sequence">
+	<h2 class="section__heading" id="works-heading" data-reveal-item>Selected writing</h2>
+	{% for excerpt in creator.excerpts | capped(3) %}
+		<article class="excerpt" data-reveal-item>
+			{% if not (excerpt | isString) and excerpt.title %}
+				<h3 class="excerpt__title">{{ excerpt.title }}</h3>
+			{% endif %}
+			<p class="excerpt__body">{{ excerpt if (excerpt | isString) else excerpt.text }}</p>
+			{% if not (excerpt | isString) and excerpt.audio_url %}
+				<audio controls preload="none" src="{{ excerpt.audio_url }}"></audio>
+			{% endif %}
+		</article>
+	{% endfor %}
+</section>

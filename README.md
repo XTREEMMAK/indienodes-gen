@@ -106,32 +106,55 @@ creator outright to continue without KJNet.
 
 ## Repository layout
 
-Proposed, not built — see [Project status](#project-status). Recorded here so the shape is
-argued before it exists rather than discovered afterwards.
-
 ```text
 src/
   _data/                      Shared and per-creator structured data
   _includes/
     layouts/                  Page shells
     components/               Hero, works, links, per-type modules
-  creators/                   One structured record per creator
-  assets/                     Creator images, audio, and media
-  css/                        Shared styles and theme tokens
+  creators/<slug>/
+    creator.yaml              One structured record per creator
+    assets/                   Creator images, audio, and media
+  assets/                     Shared CSS, JavaScript, fonts, and images
 ```
 
 ## Run it locally
 
-There is nothing to run yet. Eleventy is the chosen generator and the toolchain is
-deliberately unremarkable — Node.js, npm, a build script, and static output — but none of
-it is scaffolded in this repository.
+Install dependencies, then name the creator you want to preview:
+
+```sh
+npm ci
+npm run dev -- --creator jewel
+```
+
+The creator argument is required. This prevents a routine preview or build from silently
+processing every creator.
+
+## Build and publish
+
+Build one creator locally while their ignored media files are present:
+
+```sh
+npm run build -- --creator jewel
+```
+
+The build first verifies that locally referenced audio exists, clears stale `_site/`
+output, and writes the selected page to `_site/jewel/`. Publish `_site/` using the KJNet
+deployment process. There is deliberately no remote build action because creator audio is
+not stored in Git.
+
+A full rebuild must be requested explicitly:
+
+```sh
+npm run build:all
+```
 
 ## Adding a creator page
 
-Also not built yet. The intended shape is that adding a creator is a structured-data
-change and nothing else: a record derived from that creator's ring entry, their assets, a
-theme choice, and a build. An internal editing UI is wanted eventually, but its job is to
-make that data easier to write, never to become a second renderer.
+Add `src/creators/<slug>/creator.yaml`, place the creator's assets in the adjacent
+`assets/` directory, and run the creator-specific build above. Creator audio is ignored
+by Git and must be present locally each time the page is built or republished. If it is no
+longer available locally, request it from the creator again before building.
 
 ## Documentation
 
@@ -141,16 +164,15 @@ type contains staying in `indienodes-ring` where it is already settled.
 
 ## Project status
 
-**This repository currently holds its README and nothing else.** That is deliberate: the
-guiding rule from the kickoff brief is not to build infrastructure until repeated manual
-work proves it is needed, and the framing above is worth agreeing on before any structure
-is committed to.
+The HTML prototype and initial Eleventy scaffold are built. Jewel exercises the audio
+page, while Wren exercises a substantially different art page. Together they verify that
+ring-shaped creator records can populate the shared components, that theme options provide
+visual variation, and that creator-specific output can be published as ordinary static
+files.
 
-The first real test is intended to be a single creator page built end to end, proving that
-a ring record can populate the page, that theme options give enough visual individuality,
-and that the output deploys as an ordinary static page. A second creator of a
-substantially different type follows, because that is what exposes real gaps between the
-ring's content model and this presentation layer.
+The workflow remains intentionally local and small: creator YAML and non-audio assets are
+versioned, creator audio stays outside Git, and a named local build produces the directory
+that is handed to KJNet's publishing process.
 
 **On the name and the hosting.** The repository sits under the IndieNodes name because the
 ring is what it serves, while the pages themselves are served from KJNet infrastructure on

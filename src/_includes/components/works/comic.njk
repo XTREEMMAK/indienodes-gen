@@ -1,0 +1,15 @@
+<section class="section" aria-labelledby="works-heading" data-reveal="sequence">
+	<h2 class="section__heading" id="works-heading" data-reveal-item>Selected pages</h2>
+	{# One block, not per-page — see works/art.njk's gallery for the same call
+	   applied to a grid; pages here are a single stacked column, but treating
+	   the whole run as one reveal keeps the two image-heavy modules
+	   consistent with each other. #}
+	<div class="pages" data-reveal-item>
+		{% for page in creator.pages | capped(3) %}
+			<figure>
+				<img src="{{ page.image_url }}" alt="{{ page.caption or '' }}" loading="lazy" />
+				{% if page.caption %}<figcaption>{{ page.caption }}</figcaption>{% endif %}
+			</figure>
+		{% endfor %}
+	</div>
+</section>

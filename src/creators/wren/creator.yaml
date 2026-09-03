@@ -1,0 +1,52 @@
+id: art-wren
+creator: Wren
+type: art # audio | comic | text | game | art
+
+why: "Ink and gouache studies of things that don't hold still."
+bio: |
+  Wren paints from memory rather than reference, working fast in gouache
+  and ink so the image is finished before the memory sharpens back into
+  something accurate. Most pieces take under an hour.
+tags: [ink, gouache, studies]
+
+# <= 3, enforced in the works/art.njk partial. alt is mandatory per the
+# ring schema — it's not treated as optional metadata here either.
+artworks:
+  - image_url: "assets/artwork-1.svg"
+    alt: "Two overlapping soft-edged circles, magenta over violet, on a pale pink ground."
+    title: "Held Breath"
+    year: "2026"
+    medium: "gouache on paper"
+  - image_url: "assets/artwork-2.svg"
+    alt: "A jagged magenta mountain range silhouette against a near-black sky."
+    title: "Night Line"
+    year: "2026"
+    medium: "ink"
+  - image_url: "assets/artwork-3.svg"
+    alt: "An open magenta rectangle frame with a single diagonal line crossing it, on cream paper."
+    title: "Crossing"
+    medium: "ink and gouache"
+
+thumb_url: "assets/profile.svg"
+source_url: "https://wren.example.com"
+
+links:
+  - label: Instagram
+    url: "https://instagram.com"
+
+theme:
+  skin: card
+  backgroundImage: "assets/artwork-2.svg"
+
+sections:
+  about: true
+  works: true
+  links: true
+
+ring:
+  verificationToken: "sample-verification-token-wren"
+  tier: widget
+  # Not type-coded: indienodes-app has no badges/type-coded-art.svg yet
+  # (a known upstream gap — see the project plan). classic is the safe
+  # default until that's fixed.
+  badgeStyle: classic

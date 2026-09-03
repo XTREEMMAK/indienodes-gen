@@ -1,0 +1,214 @@
+<!doctype html>
+<!--
+	IndieNodes Gen — prototype template (dev/template/index.html)
+
+	This is the hand-authored prototype the Eleventy build gets adapted from,
+	not the build itself. It is hardcoded to one sample creator (audio type,
+	three tracks) on purpose, so the design gets settled here in plain HTML
+	before anything goes through a template engine. Open it directly with
+	file:// — no build step, no server required except for the <audio>
+	sources, which most browsers will still play from disk.
+
+	Once this looks right, css/base.css and css/skins/card.css move byte-for-
+	byte into src/assets/css/, and this markup becomes
+	src/_includes/layouts/page.njk with values swapped for Nunjucks
+	expressions. See the project plan for the full mapping.
+
+	Two things this page deliberately keeps even as a prototype, because they
+	are not stylistic and are easy to lose in translation:
+	  1. The ring embed and the verification meta tag are both server-rendered
+	     markup, not something a script inserts — a gen-hosted page IS the
+	     member's source_url, and the ring's participation checker reads
+	     served HTML without running JavaScript.
+	  2. Every external link opens in a new tab with rel="noopener noreferrer".
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jewel — IndieNodes</title>
+    <meta
+      name="description"
+      content="Bedroom pop, recorded badly on purpose. A creator page hosted for the IndieNodes ring."
+    />
+
+    <!-- How IndieNodes confirms this page belongs to the creator it names.
+		     Real content, not a placeholder — leave the value alone. -->
+    <meta name="indienode-verification" content="sample-verification-token" />
+
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/skins/card.css" />
+
+    <!-- A creator's chosen accent, inlined AFTER the stylesheet links so it
+		     wins. Gated at build time on /^#[0-9a-f]{6}$/i; an unset value
+		     emits nothing. Hardcoded here since this page has no build step. -->
+    <style>
+      :root {
+        --accent: #d7a9bc;
+      }
+    </style>
+  </head>
+  <body data-type="audio">
+    <div class="page">
+      <header class="hero">
+        <div
+          class="hero__backdrop"
+          style="background-image: url(&quot;assets/background.svg&quot;)"
+          aria-hidden="true"
+        ></div>
+        <div class="hero__inner" data-reveal="sequence">
+          <img
+            class="hero__portrait"
+            data-reveal-item
+            src="assets/profile.svg"
+            alt=""
+            width="152"
+            height="152"
+            loading="eager"
+          />
+          <div class="hero__body">
+            <span class="type-badge" data-reveal-item>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 17V5l10-2v12" />
+                <circle cx="6.5" cy="17" r="2.5" />
+                <circle cx="16.5" cy="15" r="2.5" />
+              </svg>
+              Music
+            </span>
+            <h1 class="hero__name" data-reveal-item>Jewel</h1>
+            <p class="hero__why" data-reveal-item>
+              Bedroom pop, recorded badly on purpose.
+            </p>
+            <ul class="tags" data-reveal-item>
+              <li>pop</li>
+              <li>lo-fi</li>
+              <li>bedroom</li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <section
+        class="section"
+        aria-labelledby="about-heading"
+        data-reveal="sequence"
+      >
+        <h2 class="section__heading" id="about-heading" data-reveal-item>
+          About
+        </h2>
+        <p class="prose" data-reveal-item>
+          Jewel writes and records everything alone in one room, on whatever's
+          closest — a phone mic more often than not. The songs are short, a
+          little unfinished on purpose, and meant to sound like they were made
+          by a person rather than polished by one.
+        </p>
+      </section>
+
+      <section
+        class="section"
+        aria-labelledby="works-heading"
+        data-reveal="sequence"
+      >
+        <h2 class="section__heading" id="works-heading" data-reveal-item>
+          Selected tracks
+        </h2>
+        <div class="work work--audio" data-reveal-item>
+          <p class="work__label">Should I Stay</p>
+          <audio controls preload="none" src="assets/track-1.wav">
+            <a href="assets/track-1.wav">Should I Stay (download)</a>
+          </audio>
+        </div>
+        <div class="work work--audio" data-reveal-item>
+          <p class="work__label">Weight of the Other Promise</p>
+          <audio controls preload="none" src="assets/track-2.wav">
+            <a href="assets/track-2.wav"
+              >Weight of the Other Promise (download)</a
+            >
+          </audio>
+        </div>
+        <div class="work work--audio" data-reveal-item>
+          <p class="work__label">Angel's Burning Blue Savior</p>
+          <audio controls preload="none" src="assets/track-3.wav">
+            <a href="assets/track-3.wav"
+              >Angel's Burning Blue Savior (download)</a
+            >
+          </audio>
+        </div>
+      </section>
+
+      <section
+        class="section"
+        aria-labelledby="links-heading"
+        data-reveal="sequence"
+      >
+        <h2 class="section__heading" id="links-heading" data-reveal-item>
+          Elsewhere
+        </h2>
+        <a
+          class="link-primary"
+          data-reveal-item
+          href="https://jewel.example.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span>
+            <span class="link-primary__label">Jewel's own site</span>
+            <span class="link-primary__url">jewel.example.com</span>
+          </span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 17 17 7M9 7h8v8" />
+          </svg>
+        </a>
+        <div class="link-list" data-reveal-item>
+          <a
+            href="https://bandcamp.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Bandcamp</a
+          >
+          <a
+            href="https://instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Instagram</a
+          >
+        </div>
+      </section>
+
+      <footer class="site-footer" data-reveal>
+        <!-- Verbatim from indienodes-app's embedFrameSnippet(): the default,
+				     recommended "widget" tier, a sandboxed iframe with no
+				     allow-same-origin. The centring div is theirs too, kept
+				     inline in the wrapper on purpose. -->
+        <div class="ring-widget" style="display: flex; justify-content: center">
+          <iframe
+            src="https://indienodes.us/embed-frame?site-id=audio-jewel"
+            title="IndieNodes webring"
+            width="260"
+            height="150"
+            style="border: 0"
+            sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+            loading="lazy"
+          ></iframe>
+        </div>
+        <p class="site-footer__note">
+          Hosted for the
+          <a
+            href="https://indienodes.us"
+            target="_blank"
+            rel="noopener noreferrer"
+            >IndieNodes</a
+          >
+          ring by KJNet. Jewel's own site is
+          <a
+            href="https://jewel.example.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            >jewel.example.com</a
+          >.
+        </p>
+      </footer>
+    </div>
+    <script src="js/reveal.js" defer></script>
+  </body>
+</html>

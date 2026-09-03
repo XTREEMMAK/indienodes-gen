@@ -1,0 +1,11 @@
+{# The ring embed itself. Server-rendered into the built HTML, not injected
+   at runtime: a gen-hosted page becomes a member's source_url, and the
+   ring's participation checker reads served HTML without executing JS. #}
+{% set embedHtml = widget.embedHtmlFor({
+	tier: creator.ring.tier or "widget",
+	badgeStyle: creator.ring.badgeStyle or "classic",
+	origin: site.ringOrigin,
+	siteId: creator.id or creator.slug,
+	entryType: creator.type
+}) %}
+<div class="ring-widget" style="display: flex; justify-content: center">{{ embedHtml | safe }}</div>

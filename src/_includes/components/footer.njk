@@ -1,0 +1,16 @@
+<footer class="site-footer" data-reveal>
+	{% if creator.ring %}
+		{% include "components/ring-embed.njk" %}
+	{% endif %}
+	<p class="site-footer__note">
+		Hosted for the
+		<a href="{{ site.ringOrigin }}" target="_blank" rel="noopener noreferrer">IndieNodes</a>
+		ring by KJNet.
+		{% if creator.source_url %}
+			{{ creator.creator }}'s own site is
+			<a href="{{ creator.source_url }}" target="_blank" rel="noopener noreferrer"
+				>{{ creator.source_url }}</a
+			>.
+		{% endif %}
+	</p>
+</footer>

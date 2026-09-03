@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{{ creator.creator }} — IndieNodes</title>
+		<meta name="description" content="{{ creator.why }}" />
+
+		{# How IndieNodes confirms this page belongs to the creator it names.
+		   Required whenever a creator has an active ring entry; this page IS
+		   their source_url once they join, and the ring's participation
+		   checker reads served HTML without running JavaScript. #}
+		{% if creator.ring.verificationToken %}
+			<meta name="indienode-verification" content="{{ creator.ring.verificationToken }}" />
+		{% endif %}
+
+		<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+		<link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16" />
+		<link rel="stylesheet" href="/assets/css/base.css" />
+		<link rel="stylesheet" href="/assets/css/skins/{{ creator.theme.skin or 'card' }}.css" />
+
+		{# A creator's chosen accent, inlined AFTER the stylesheet links so it
+		   wins, gated on a strict hex pattern so an unexpected value in the
+		   YAML can't inject anything beyond a color. An unset or invalid
+		   value emits nothing and the skin's own default accent stands. #}
+		{% set accent = creator.theme.accent %}
+		{% if accent and (accent | regexMatch('^#[0-9a-fA-F]{6}$')) %}
+			<style>
+				:root {
+					--accent: {{ accent }};
+				}
+			</style>
+		{% endif %}
+	</head>
+	<body data-type="{{ creator.type }}">
+		<div class="page">
+			{% include "components/hero.njk" %}
+
+			{% if creator.sections.about and creator.bio %}
+				{% include "components/about.njk" %}
+			{% endif %}
+
+			{% if creator.sections.works %}
+				{% include "components/works/" + creator.type + ".njk" %}
+			{% endif %}
+
+			{% if creator.sections.links %}
+				{% include "components/links.njk" %}
+			{% endif %}
+
+			{% include "components/footer.njk" %}
+		</div>
+		<script src="/assets/js/reveal.js" defer></script>
+	</body>
+</html>

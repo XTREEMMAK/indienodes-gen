@@ -1,0 +1,15 @@
+<section class="section" aria-labelledby="works-heading" data-reveal="sequence">
+	<h2 class="section__heading" id="works-heading" data-reveal-item>Play</h2>
+	<div class="game__cover" data-reveal-item>
+		{% if creator.preview_url %}
+			<video src="{{ creator.preview_url }}" muted loop playsinline poster="{{ creator.thumb_url }}"></video>
+		{% elif creator.thumb_url %}
+			<img src="{{ creator.thumb_url }}" alt="" loading="lazy" />
+		{% endif %}
+	</div>
+	{% if creator.trailer_url %}
+		<div class="game__links" data-reveal-item>
+			<a href="{{ creator.trailer_url }}" target="_blank" rel="noopener noreferrer">Watch the trailer</a>
+		</div>
+	{% endif %}
+</section>

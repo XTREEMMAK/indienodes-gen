@@ -1,0 +1,43 @@
+/* ===========================================================================
+   Skin: card
+   ---------------------------------------------------------------------------
+   The default skin. A skin is a stylesheet ONLY — no markup here that base.css
+   doesn't already provide, no new classes the shell doesn't already emit.
+   Swapping `theme.skin` should produce byte-identical HTML with a different
+   <link> in <head>; if a skin needs a class base.css doesn't have, the class
+   goes in base.css (empty by default) and the skin fills it in.
+
+   Glass belongs on chrome and containers — the hero portrait frame, the
+   footer — never on content that has to be read. That's why the actual
+   `.work`, `.gallery img`, `.excerpt` surfaces stay solid `--bg-elevated`
+   from base.css and are not touched here. Copied rule, verbatim source:
+   indienodes-app/src/skins/ui/glassmorphic/styles.css.
+   =========================================================================== */
+
+.hero__portrait {
+  box-shadow: var(--glass-shadow);
+}
+
+.site-footer {
+  border-top: none;
+  padding: 2.5rem 2rem;
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  /* One filter function only. A minifier can collapse `blur(16px)
+     saturate(140%)` into a space-broken, invalid value that gets discarded
+     wholesale — silently producing a see-through panel with no blur at all.
+     Keep this rule to exactly one function, always. */
+  backdrop-filter: blur(16px);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .site-footer {
+    background: var(--bg-elevated);
+  }
+}
+
+.type-badge {
+  border: 1px solid color-mix(in srgb, var(--creator-type) 30%, var(--border));
+}

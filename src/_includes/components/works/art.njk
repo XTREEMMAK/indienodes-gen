@@ -1,0 +1,24 @@
+<section class="section" aria-labelledby="works-heading" data-reveal="sequence">
+	<h2 class="section__heading" id="works-heading" data-reveal-item>Selected works</h2>
+	{# The gallery reveals as one block rather than each figure individually —
+	   a per-item stagger reads as a clean cascade in a linear list (see
+	   works/audio.njk), but in a multi-column grid the same nth-child order
+	   doesn't track reading order, so it would look uneven rather than
+	   deliberate. #}
+	<div class="gallery" data-reveal-item>
+		{% for work in creator.artworks | capped(3) %}
+			<figure>
+				<img src="{{ work.image_url }}" alt="{{ work.alt }}" loading="lazy" />
+				{% if work.title or work.year or work.medium %}
+					<figcaption>
+						{% if work.title %}<strong>{{ work.title }}</strong>{% endif %}
+						{% if work.year and work.medium %}{{ work.year }} · {{ work.medium }}
+						{% elif work.year %}{{ work.year }}
+						{% elif work.medium %}{{ work.medium }}
+						{% endif %}
+					</figcaption>
+				{% endif %}
+			</figure>
+		{% endfor %}
+	</div>
+</section>

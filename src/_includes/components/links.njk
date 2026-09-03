@@ -1,0 +1,32 @@
+<section class="section" aria-labelledby="links-heading" data-reveal="sequence">
+	<h2 class="section__heading" id="links-heading" data-reveal-item>Elsewhere</h2>
+
+	{# The creator's own site, rendered first and larger than everything else.
+	   Not decoration — this page is a bridge, and their site is the
+	   destination it points to. #}
+	{% if creator.source_url %}
+		<a
+			class="link-primary"
+			data-reveal-item
+			href="{{ creator.source_url }}"
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			<span>
+				<span class="link-primary__label">{{ creator.creator }}'s own site</span>
+				<span class="link-primary__url">{{ creator.source_url }}</span>
+			</span>
+			<svg viewBox="0 0 24 24" aria-hidden="true">
+				<path d="M7 17 17 7M9 7h8v8" />
+			</svg>
+		</a>
+	{% endif %}
+
+	{% if creator.links and creator.links.length %}
+		<div class="link-list" data-reveal-item>
+			{% for link in creator.links %}
+				<a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+			{% endfor %}
+		</div>
+	{% endif %}
+</section>

@@ -1,0 +1,684 @@
+@import "./fonts.css";
+
+/* ===========================================================================
+   IndieNodes Gen — base stylesheet
+   ---------------------------------------------------------------------------
+   Everything here is skin-independent: tokens, reset, layout, and the
+   structure of every section. A page linking ONLY this file is complete and
+   usable. A skin (css/skins/*.css) layers surface treatment on top and is
+   never allowed to change markup or structure.
+
+   That split is the whole point of the one-shell decision: a markup fix
+   reaches every creator, and swapping `theme.skin` produces byte-identical
+   HTML with a different stylesheet link. If a skin ever needs new markup,
+   the markup belongs here and the skin gets a class to hang styling on.
+
+   Palette is the IndieNodes house language, copied by value from
+   indienodes-app/src/app.css (the source of truth) rather than from
+   indienodes-web, whose port has drifted a few hex values.
+   =========================================================================== */
+
+:root {
+  --font-display:
+    "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Karla Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.5rem;
+
+  /* Entry type colors. Token names use the ring schema's singular enum
+     values (audio/comic/text/game/art) so `var(--type-${type})` always
+     resolves without a lookup table. Do not rename these. */
+  --type-audio: #3b82f6;
+  --type-comic: #a855f7;
+  --type-text: #f59e0b;
+  --type-game: #22c55e;
+  --type-art: #ec4899;
+
+  /* Light theme (default) */
+  --bg: #f7f4ee;
+  --bg-elevated: #ffffff;
+  --text: #221f1a;
+  --text-muted: #6b6558;
+  --text-faint: #9a9384;
+  --border: #e4ddcf;
+  --accent: #b5502f;
+  --accent-hover: #963f24;
+
+  --glass-bg: rgb(255 255 255 / 0.62);
+  --glass-border: rgb(34 31 26 / 0.1);
+  --glass-shadow: 0 8px 32px rgb(34 31 26 / 0.08);
+
+  color-scheme: light dark;
+}
+
+/* Dark is blue-leaning, deliberately not brown — the accent flips from warm
+   ember to cool blue while light is left untouched. See decisions.md,
+   "LOCKED: Dark mode is blue-leaning, not brown-leaning". */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1420;
+    --bg-elevated: #171d2c;
+    --text: #eef1f6;
+    --text-muted: #9aa7bd;
+    --text-faint: #5c667a;
+    --border: #2a3346cc;
+    --accent: #6ea8f0;
+    --accent-hover: #8bb9f5;
+
+    --glass-bg: rgb(28 36 54 / 0.5);
+    --glass-border: rgb(255 255 255 / 0.08);
+    --glass-shadow: 0 8px 32px rgb(0 0 0 / 0.35);
+  }
+}
+
+/* The creator's type resolves to one color once, here, so no other rule ever
+   needs to branch on type. */
+body[data-type="audio"] {
+  --creator-type: var(--type-audio);
+}
+body[data-type="comic"] {
+  --creator-type: var(--type-comic);
+}
+body[data-type="text"] {
+  --creator-type: var(--type-text);
+}
+body[data-type="game"] {
+  --creator-type: var(--type-game);
+}
+body[data-type="art"] {
+  --creator-type: var(--type-art);
+}
+body {
+  --creator-type: var(--accent);
+}
+
+/* --------------------------------------------------------------- reset -- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  line-height: 1.68;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+h1 {
+  font-size: clamp(3.2rem, 7vw, 5.75rem);
+}
+h2 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+h3 {
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+}
+
+p {
+  margin: 0;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* An accent chosen by a creator is DECORATIVE ONLY. A pale accent that reads
+   fine as a rule or a wash will fail contrast as body text, and we cannot
+   vet every value someone picks. So links carry --text with an accent
+   underline rather than accent-colored text. This rule is load-bearing;
+   don't "fix" it by coloring link text. */
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 160ms ease;
+}
+
+a:hover {
+  text-decoration-color: var(--accent);
+}
+
+/* ------------------------------------------------------- intro reveal --
+   Progressive enhancement: everything here only activates under `.has-js`,
+   a class js/reveal.js adds as its first line. Without JS (or if that file
+   fails to load), every [data-reveal] element uses its plain, fully-visible
+   base.css rules below and nothing is ever stuck hidden.
+
+   Fade-rise is the default. `data-reveal="sequence"` applies that same motion
+   to its [data-reveal-item] children in order, which keeps grouped content
+   readable while giving paragraphs and cards a deliberate rhythm. */
+
+.has-js [data-reveal] {
+  transition:
+    opacity 700ms ease-out,
+    transform 700ms ease-out;
+}
+
+.has-js [data-reveal]:not([data-reveal="sequence"]),
+.has-js [data-reveal="sequence"] [data-reveal-item] {
+  opacity: 0;
+  transform: translateY(1.35rem);
+}
+
+.has-js [data-reveal="sequence"] [data-reveal-item] {
+  transition:
+    opacity 650ms ease-out,
+    transform 650ms ease-out;
+}
+
+.has-js [data-reveal].is-visible:not([data-reveal="sequence"]),
+.has-js [data-reveal="sequence"].is-visible [data-reveal-item] {
+  opacity: 1;
+  transform: none;
+}
+
+.has-js [data-reveal="sequence"] [data-reveal-item]:nth-child(2) {
+  transition-delay: 100ms;
+}
+.has-js [data-reveal="sequence"] [data-reveal-item]:nth-child(3) {
+  transition-delay: 200ms;
+}
+.has-js [data-reveal="sequence"] [data-reveal-item]:nth-child(4) {
+  transition-delay: 300ms;
+}
+.has-js [data-reveal="sequence"] [data-reveal-item]:nth-child(n + 5) {
+  transition-delay: 400ms;
+}
+
+/* Hero items are split across two flex children, so their explicit order is
+   clearer than coupling the animation to the body wrapper's DOM position. */
+.has-js .hero__body [data-reveal-item]:nth-child(1) {
+  transition-delay: 100ms;
+}
+.has-js .hero__body [data-reveal-item]:nth-child(2) {
+  transition-delay: 200ms;
+}
+.has-js .hero__body [data-reveal-item]:nth-child(3) {
+  transition-delay: 300ms;
+}
+.has-js .hero__body [data-reveal-item]:nth-child(4) {
+  transition-delay: 400ms;
+}
+
+/* A small stagger across the page's own top-level sections (header, each
+   <section>, the footer — the direct children of .page), so sections that
+   enter the viewport close together don't all snap in at once. Capped at
+   4 steps; a 5th+ section reuses the last delay rather than growing the
+   list forever. */
+.has-js [data-reveal]:nth-child(2) {
+  transition-delay: 90ms;
+}
+.has-js [data-reveal]:nth-child(3) {
+  transition-delay: 180ms;
+}
+.has-js [data-reveal]:nth-child(4),
+.has-js [data-reveal]:nth-child(n + 4) {
+  transition-delay: 270ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .has-js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .has-js [data-reveal="sequence"] [data-reveal-item] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------- shell -- */
+
+.page {
+  width: min(100% - clamp(2rem, 6vw, 6rem), 76rem);
+  margin-inline: auto;
+  padding-block: 0 5rem;
+}
+
+.section {
+  margin-top: clamp(4rem, 8vw, 7rem);
+}
+
+.section__heading {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  margin-bottom: 2rem;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.section__heading::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.prose {
+  color: var(--text-muted);
+  max-width: 48rem;
+  font-size: clamp(1.2rem, 2vw, 1.4rem);
+  line-height: 1.72;
+  white-space: pre-line; /* creator bios are plain text with real line breaks */
+}
+
+/* ----------------------------------------------------------------- hero -- */
+
+.hero {
+  position: relative;
+  padding-block: clamp(4.5rem, 10vw, 8rem) clamp(2.5rem, 5vw, 4.5rem);
+}
+
+/* The creator's background image, when set. Sits behind the hero only, never
+   the whole page: a full-page background image is the fastest way to make
+   text unreadable and it is not a knob worth offering.
+
+   Deliberately NOT a [data-reveal] target: its soft, page-bleeding fade is a
+   plain CSS animation while the foreground hero content uses the sequenced
+   fade-rise. The backdrop overshoots BELOW .hero's own bottom edge on purpose
+   so its gradient has room to finish rather than being cut off at the edge. */
+.hero__backdrop {
+  position: absolute;
+  z-index: -1;
+  inset: 0 auto -8rem 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background-position: center;
+  background-size: cover;
+  opacity: 0.28;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 100%);
+  animation: hero-backdrop-in 1100ms ease-out both;
+}
+
+@keyframes hero-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.28;
+  }
+}
+
+.hero__inner {
+  display: flex;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  flex-wrap: wrap;
+}
+
+.hero__portrait {
+  width: clamp(8.5rem, 19vw, 12.5rem);
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--creator-type) 18%, var(--bg-elevated));
+  object-fit: cover;
+}
+
+.hero__body {
+  flex: 1 1 24rem;
+  min-width: 0;
+}
+
+.hero__name {
+  margin-block: 0.65rem 1rem;
+  overflow-wrap: break-word;
+}
+
+.hero__why {
+  max-width: 46rem;
+  color: var(--text-muted);
+  font-size: clamp(1.25rem, 2.2vw, 1.55rem);
+}
+
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--creator-type) 15%, transparent);
+  color: var(--creator-type);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.type-badge svg {
+  width: 1em;
+  height: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1.4rem;
+}
+
+.tags li {
+  padding: 0.18rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-faint);
+  font-size: 0.9rem;
+}
+
+/* ---------------------------------------------------------------- works --
+   One card shape shared by every type. The per-type modules below vary what
+   sits INSIDE a card, never the card itself — that is what keeps five
+   content types from becoming five layouts. */
+
+.work {
+  padding: 1.4rem 1.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+}
+
+.work + .work {
+  margin-top: 1.1rem;
+}
+
+.work__label {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.work__meta {
+  color: var(--text-faint);
+  font-size: 0.95rem;
+}
+
+/* audio — native controls on purpose. A custom player is a JS dependency on
+   a page whose whole promise is that it keeps working untouched. */
+.work--audio .work__label {
+  margin-bottom: 0.6rem;
+}
+
+.work--audio audio {
+  width: 100%;
+}
+
+/* art */
+.gallery {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.gallery figure {
+  margin: 0;
+}
+
+.gallery img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.gallery figcaption {
+  margin-top: 0.75rem;
+  color: var(--text-faint);
+  font-size: 0.95rem;
+}
+
+.gallery figcaption strong {
+  display: block;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+/* comic — pages read at full width, stacked, in order. */
+.pages figure {
+  margin: 0;
+}
+
+.pages figure + figure {
+  margin-top: 1.5rem;
+}
+
+.pages img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.pages figcaption {
+  margin-top: 0.7rem;
+  color: var(--text-faint);
+  font-size: 0.95rem;
+}
+
+/* text */
+.excerpt + .excerpt {
+  margin-top: 2rem;
+}
+
+.excerpt__title {
+  margin-bottom: 0.5rem;
+}
+
+.excerpt__body {
+  max-width: 48rem;
+  white-space: pre-line;
+}
+
+.excerpt audio {
+  width: min(100%, 32rem);
+  margin-top: 0.9rem;
+}
+
+/* game */
+.game__cover img,
+.game__cover video {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.game__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.1rem;
+}
+
+/* ---------------------------------------------------------------- links -- */
+
+/* The creator's own site is rendered first and larger than everything else.
+   This is not decoration: the whole framing of this project is that the page
+   is a bridge and their site is the destination. */
+.link-primary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.4rem 1.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  text-decoration: none;
+}
+
+.link-primary:hover {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+}
+
+.link-primary__label {
+  display: block;
+  color: var(--text-faint);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.link-primary__url {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.link-primary svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.1rem;
+}
+
+.link-list a {
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link-list a:hover {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+}
+
+/* --------------------------------------------------------------- footer -- */
+
+.site-footer {
+  margin-top: clamp(3.5rem, 8vw, 6rem);
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+/* Copied verbatim from indienodes-app's widgetEmbedHtml: the centring is
+   inline in the wrapper there because 17 of its 21 templates forgot to write
+   the rule. The margin is ours; the flex/justify-content is theirs and is
+   duplicated inline in the markup on purpose. */
+.ring-widget {
+  margin-bottom: 1.5rem;
+}
+
+.ring-widget iframe {
+  color-scheme: light;
+}
+
+.site-footer__note {
+  color: var(--text-faint);
+  font-size: 0.92rem;
+}
+
+.site-footer__note a {
+  color: inherit;
+}
+
+@media (max-width: 34rem) {
+  .hero__inner {
+    gap: 1.25rem;
+  }
+
+  .hero__portrait {
+    width: 8rem;
+  }
+
+  .link-primary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

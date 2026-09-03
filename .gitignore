@@ -1,3 +1,13 @@
 node_modules/
 _site/
 .cache/
+/tmp/
+
+# Creator-provided audio is deployment input, not repository content.
+src/creators/**/*.aac
+src/creators/**/*.flac
+src/creators/**/*.m4a
+src/creators/**/*.mp3
+src/creators/**/*.ogg
+src/creators/**/*.opus
+src/creators/**/*.wav

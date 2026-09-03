@@ -1,0 +1,21 @@
+{
+  "name": "indienodes-gen",
+  "version": "0.1.0",
+  "description": "Static, hosted creator pages for IndieNodes-fit creators whose current site cannot carry a Node.",
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/build.js --serve",
+    "build": "node scripts/build.js",
+    "build:all": "node scripts/build.js --all",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "js-yaml": "^5.4.1"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.6",
+    "prettier": "^3.3.3"
+  }
+}

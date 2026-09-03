@@ -1,0 +1,27 @@
+/* Self-hosted variable fonts, not loaded from a font CDN at runtime. Copied
+   by value from indienodes-web/src/assets/fonts/, which took them from the
+   @fontsource-variable packages the app depends on. This repo has no npm
+   dependency on those packages, just their output.
+
+   Note the deliberate difference from indienodes-app's *generated* creator
+   sites, which use system font stacks only: those get downloaded by creators
+   who then have to host them somewhere, so shipping font files would be a
+   burden. These pages are hosted here, so two woff2 files cost nothing and
+   the pages read as part of the same family as the rest of IndieNodes. */
+
+@font-face {
+  font-family: "Space Grotesk Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url("../fonts/space-grotesk-latin-wght-normal.woff2")
+    format("woff2-variations");
+}
+
+@font-face {
+  font-family: "Karla Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url("../fonts/karla-latin-wght-normal.woff2") format("woff2-variations");
+}
