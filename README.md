@@ -139,9 +139,12 @@ npm run build -- --creator jewel
 ```
 
 The build first verifies that locally referenced audio exists, clears stale `_site/`
-output, and writes the selected page to `_site/jewel/`. Publish `_site/` using the KJNet
-deployment process. There is deliberately no remote build action because creator audio is
-not stored in Git.
+output, and writes the selected page to `_site/jewel/`. A single-creator build also zips
+the whole output — that creator's own page plus the shared chrome it needs to render — to
+`dist/jewel.zip`, since `_site/` at that point already contains nothing but that one
+creator: a self-contained bundle to hand off or drop onto any static host as-is. Publish
+`_site/` using the KJNet deployment process. There is deliberately no remote build action
+because creator audio is not stored in Git.
 
 A full rebuild must be requested explicitly:
 
