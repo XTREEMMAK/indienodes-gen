@@ -4,11 +4,7 @@ dist/
 .cache/
 /tmp/
 
-# Creator-provided audio is deployment input, not repository content.
-src/creators/**/*.aac
-src/creators/**/*.flac
-src/creators/**/*.m4a
-src/creators/**/*.mp3
-src/creators/**/*.ogg
-src/creators/**/*.opus
-src/creators/**/*.wav
+# Real creator content (bios, contact links, photos, audio) is personal
+# data supplied for hosting, not something this public tool repo should
+# distribute or carry in its history. Kept local; back up separately.
+src/creators/
