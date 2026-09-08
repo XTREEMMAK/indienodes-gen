@@ -7,4 +7,7 @@ dist/
 # Real creator content (bios, contact links, photos, audio) is personal
 # data supplied for hosting, not something this public tool repo should
 # distribute or carry in its history. Kept local; back up separately.
+# dev/creators/ holds the same kind of hand-authored, creator-specific
+# preview content (real photos included) as src/creators/ — same reasoning.
 src/creators/
+dev/creators/
