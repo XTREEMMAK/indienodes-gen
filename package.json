@@ -1,6 +1,6 @@
 {
   "name": "indienodes-gen",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Static, hosted creator pages for IndieNodes-fit creators whose current site cannot carry a Node.",
   "license": "GPL-3.0-or-later",
   "private": true,
