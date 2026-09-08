@@ -18,12 +18,16 @@
     canvas.height = height * scale;
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
   }
+  // Back to the original fine dust specks (see the flare experiment noted
+  // in project memory for the size/opacity/density values that were tried
+  // and reverted), but denser and faster-rising than the original: density
+  // divisor 22000 -> 11000 and cap 50 -> 100, rise 3-11 -> 6-22.
   function spawn(atBottom) {
     return {
       x: Math.random() * width,
       y: atBottom ? height + 10 : Math.random() * height,
       size: 0.6 + Math.random() * 1.6,
-      rise: 3 + Math.random() * 8,
+      rise: 6 + Math.random() * 16,
       wobble: 6 + Math.random() * 10,
       phase: Math.random() * Math.PI * 2,
       opacity: 0.12 + Math.random() * 0.3,
@@ -34,7 +38,7 @@
     const dt = Math.min((now - (last || now)) / 1000, 0.05);
     last = now;
     ctx.clearRect(0, 0, width, height);
-    const count = Math.min(50, Math.ceil((width * height) / 22000));
+    const count = Math.min(100, Math.ceil((width * height) / 11000));
     if (motes.length > count) motes.length = count;
     while (motes.length < count) motes.push(spawn());
     motes.forEach((m, i) => {
