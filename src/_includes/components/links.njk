@@ -1,4 +1,4 @@
-<section class="section" aria-labelledby="links-heading" data-reveal="sequence">
+<section class="section section--links" aria-labelledby="links-heading" data-reveal="sequence">
 	<h2 class="section__heading" id="links-heading" data-reveal-item>Elsewhere</h2>
 
 	{# The creator's own site, rendered first and larger than everything else.
@@ -25,7 +25,13 @@
 	{% if creator.links and creator.links.length %}
 		<div class="link-list" data-reveal-item>
 			{% for link in creator.links %}
-				<a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+                {% set icon = (link.icon or link.label) | socialIcon %}
+                <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"
+                   {% if icon %}data-social="{{ icon }}"{% endif %}
+                   {% if creator.theme.socialLabels == false and icon %}class="social-button--icon-only" aria-label="{{ link.label }}" title="{{ link.label }}"{% endif %}>
+                  {% if icon %}{{ icon | socialSvg | safe }}{% endif %}
+                  {% if creator.theme.socialLabels != false or not icon %}<span>{{ link.label }}</span>{% endif %}
+                </a>
 			{% endfor %}
 		</div>
 	{% endif %}

@@ -11,13 +11,6 @@
 {% set typeLabels = { audio: "Music", comic: "Comic", text: "Text", game: "Game", art: "Art" } %}
 
 <header class="hero">
-	{% if creator.theme.backgroundImage %}
-		<div
-			class="hero__backdrop"
-			style="background-image: url('{{ creator.theme.backgroundImage }}')"
-			aria-hidden="true"
-		></div>
-	{% endif %}
 	<div class="hero__inner" data-reveal="sequence">
 		{% if creator.thumb_url %}
 			<img
@@ -25,12 +18,16 @@
 				data-reveal-item
 				src="{{ creator.thumb_url }}"
 				alt=""
-				width="152"
-				height="152"
+				width="200"
+				height="200"
 				loading="eager"
 			/>
 		{% endif %}
 		<div class="hero__body">
+            {% if creator.photo_credit %}<p class="photo-credit">{{ creator.photo_credit }}</p>{% endif %}
+			{% if creator.site_icon %}
+				<img class="site-icon" src="{{ creator.site_icon }}" alt="" width="40" height="40" data-reveal-item />
+			{% endif %}
 			<span class="type-badge" data-reveal-item>
 				<svg viewBox="0 0 24 24" aria-hidden="true">
 					{% for d in typeIcons[creator.type] %}

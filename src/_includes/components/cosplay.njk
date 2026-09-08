@@ -1,0 +1,14 @@
+<section class="section" aria-labelledby="cosplay-heading">
+  <h2 class="section__heading" id="cosplay-heading">Cosplay collab</h2>
+  <p class="prose">{{ creator.cosplay.intro }}</p>
+  {% if creator.cosplay.contact_url %}<p class="cosplay-contact"><a href="{{ creator.cosplay.contact_url }}">Email Jewel about a collaboration</a></p>{% endif %}
+  <div class="cosplay-groups">
+    {% for group in creator.cosplay.groups %}
+      <section class="cosplay-group">
+        <h3>{{ group.label }}</h3>
+        {% if group.note %}<p>{{ group.note }}</p>{% endif %}
+        <ul>{% for item in group.items %}<li>{{ item.name }}</li>{% endfor %}</ul>
+      </section>
+    {% endfor %}
+  </div>
+</section>

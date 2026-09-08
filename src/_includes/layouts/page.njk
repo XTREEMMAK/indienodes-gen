@@ -14,10 +14,14 @@
 			<meta name="indienode-verification" content="{{ creator.ring.verificationToken }}" />
 		{% endif %}
 
-		<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
-		<link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16" />
-		<link rel="stylesheet" href="/assets/css/base.css" />
-		<link rel="stylesheet" href="/assets/css/skins/{{ creator.theme.skin or 'card' }}.css" />
+		{% if creator.site_icon %}
+		<link rel="icon" href="{{ creator.site_icon }}" />
+		{% else %}
+		<link rel="icon" href="{{ publicRoot }}favicon-32.png" type="image/png" sizes="32x32" />
+		<link rel="icon" href="{{ publicRoot }}favicon-16.png" type="image/png" sizes="16x16" />
+		{% endif %}
+		<link rel="stylesheet" href="{{ assetRoot }}/css/base.css" />
+		<link rel="stylesheet" href="{{ assetRoot }}/css/skins/{{ creator.theme.skin or 'card' }}.css" />
 
 		{# A creator's chosen accent, inlined AFTER the stylesheet links so it
 		   wins, gated on a strict hex pattern so an unexpected value in the
@@ -31,12 +35,39 @@
 				}
 			</style>
 		{% endif %}
+        {% if creator.theme.effects.cherryBlossoms %}
+          <link rel="stylesheet" href="{{ assetRoot }}/css/blossoms.css" />
+        {% endif %}
+        <style>
+          {% if creator.theme.backgroundColor and (creator.theme.backgroundColor | regexMatch('^#[0-9a-fA-F]{6}$')) %}
+          :root { --bg: {{ creator.theme.backgroundColor }}; }
+          {% endif %}
+          {% if creator.theme.backgroundColorDark and (creator.theme.backgroundColorDark | regexMatch('^#[0-9a-fA-F]{6}$')) %}
+          @media (prefers-color-scheme: dark) { :root { --bg: {{ creator.theme.backgroundColorDark }}; } }
+          {% endif %}
+        </style>
+        {% if creator.theme.glassPanels != false %}
+          <link rel="stylesheet" href="{{ assetRoot }}/css/glass-panels.css" />
+        {% endif %}
 	</head>
-	<body data-type="{{ creator.type }}">
-		<div class="page">
+	<body data-type="{{ creator.type }}"{% if creator.theme.effects.blossomGlassGlow %} data-blossom-glow{% endif %}>
+        {% if creator.theme.backgroundImage %}
+          <div class="site-backdrop" style="background-image: url('{{ creator.theme.backgroundImage }}')" aria-hidden="true"></div>
+        {% endif %}
+		{% if creator.theme.effects.cherryBlossoms %}
+          <canvas class="blossoms" aria-hidden="true"></canvas>
+          <button class="blossoms-toggle" hidden type="button" aria-pressed="false">Pause petals</button>
+        {% endif %}
+        <div class="page">
 			{% include "components/hero.njk" %}
 
-			{% if creator.sections.about and creator.bio %}
+			{% if creator.cosplay.groups.length %}
+              <nav class="profile-tabs" data-tabs data-reveal aria-label="Creator interests">
+                <a href="#music">Music</a><a href="#cosplay">Cosplay</a>
+              </nav>
+              <div id="music">
+            {% endif %}
+            {% if creator.sections.about and creator.bio %}
 				{% include "components/about.njk" %}
 			{% endif %}
 
@@ -48,8 +79,18 @@
 				{% include "components/links.njk" %}
 			{% endif %}
 
-			{% include "components/footer.njk" %}
+			{% if creator.cosplay.groups.length %}
+              </div>
+              <div id="cosplay">{% include "components/cosplay.njk" %}</div>
+            {% endif %}
+            {% include "components/footer.njk" %}
 		</div>
-		<script src="/assets/js/reveal.js" defer></script>
+		<script src="{{ assetRoot }}/js/reveal.js" defer></script>
+        {% if creator.cosplay.groups.length %}<script src="{{ assetRoot }}/js/tabs.js" defer></script>{% endif %}
+        {% if creator.theme.effects.cherryBlossoms %}<script src="{{ assetRoot }}/js/blossoms.js" defer></script>{% endif %}
+        {% if creator.type == 'audio' and creator.sections.works and creator.tracks.length %}
+          <script src="{{ assetRoot }}/js/vendor/wavesurfer.min.js" defer></script>
+          <script src="{{ assetRoot }}/js/waveforms.js" defer></script>
+        {% endif %}
 	</body>
 </html>
