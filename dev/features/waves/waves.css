@@ -1,0 +1,72 @@
+/* Adapted from SayanBarcha/Simple-Waves. See waves-NOTICE.txt. */
+.waves-background {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  /* Override the shared SVG reset so blur overscan can exceed the viewport. */
+  max-width: none;
+  height: clamp(180px, 40vh, 460px);
+  z-index: 0;
+  pointer-events: none;
+  color: var(--accent, #7699b8);
+}
+/* Extend the blurred edges beyond the viewport to avoid faded side seams. */
+.waves-background--blur {
+  left: -24px;
+  bottom: -24px;
+  width: calc(100% + 48px);
+  filter: blur(8px);
+}
+.waves-background__layers > use {
+  fill: currentColor;
+  animation: background-wave-drift 25s cubic-bezier(.55, .5, .45, .5) infinite;
+}
+.waves-background__layers > use:nth-child(1) {
+  opacity: .12;
+  animation-delay: -2s;
+  animation-duration: 7s;
+}
+.waves-background__layers > use:nth-child(2) {
+  opacity: .18;
+  animation-delay: -3s;
+  animation-duration: 10s;
+}
+.waves-background__layers > use:nth-child(3) {
+  opacity: .24;
+  animation-delay: -4s;
+  animation-duration: 13s;
+}
+.waves-background__layers > use:nth-child(4) {
+  opacity: .32;
+  animation-delay: -5s;
+  animation-duration: 20s;
+}
+.waves-background.is-paused use {
+  animation-play-state: paused;
+}
+.waves-toggle {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 3;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: .5rem 1rem;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font: inherit;
+  font-size: .875rem;
+  cursor: pointer;
+}
+@keyframes background-wave-drift {
+  from { transform: translate3d(-90px, 0, 0); }
+  to { transform: translate3d(86px, 0, 0); }
+}
+@media (max-width: 768px) {
+  .waves-background { height: 28vh; min-height: 120px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .waves-background__layers > use { animation: none; }
+  .waves-toggle { display: none; }
+}

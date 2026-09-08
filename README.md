@@ -139,7 +139,8 @@ npm run build -- --creator jewel
 ```
 
 The build verifies local audio, clears stale `_site/` output, and writes the
-selected creator directly to `_site/index.html`. `dist/jewel.zip` contains:
+selected creator directly to `_site/index.html`. Generated HTML is formatted
+with Prettier before it is written or zipped, including development rebuilds. `dist/jewel.zip` contains:
 
 ```text
 index.html          # Jewel's page

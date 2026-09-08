@@ -1,4 +1,5 @@
 import { load as parseYaml } from "js-yaml";
+import { format } from "prettier";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 
 const CREATORS_DIR = "src/creators";
@@ -28,6 +29,12 @@ function getBuildCreatorSlugs() {
 }
 
 export default function (eleventyConfig) {
+  // Format rendered HTML before writing it, including watch rebuilds and ZIPs.
+  eleventyConfig.addTransform("format-html", async function (content) {
+    if (typeof this.page.outputPath !== "string" || !this.page.outputPath.endsWith(".html"))
+      return content;
+    return format(content, { parser: "html" });
+  });
   const creatorSlugs = getBuildCreatorSlugs();
   const buildAll = process.env.INDIENODES_BUILD_CREATOR === "*";
   eleventyConfig.addGlobalData("buildAll", buildAll);
@@ -43,6 +50,9 @@ export default function (eleventyConfig) {
     const icons = {
       bandcamp: "bandcamp",
       youtube: "youtube",
+      tiktok: "tiktok",
+      imdb: "imdb",
+      globe: "globe",
       facebook: "facebook",
       spotify: "spotify",
       bluesky: "bluesky",
@@ -57,7 +67,7 @@ export default function (eleventyConfig) {
       email: "email",
       cv: "cv",
     };
-    return Object.hasOwn(icons, key) ? icons[key] : "";
+    return Object.hasOwn(icons, key) ? icons[key] : "globe";
   });
   // Inline only our bundled SVGs, never arbitrary YAML paths or markup.
   const iconNames = new Set(

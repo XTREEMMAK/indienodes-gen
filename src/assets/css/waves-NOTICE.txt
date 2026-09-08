@@ -1,0 +1,7 @@
+Wave geometry and CSS animation adapted from Simple-Waves by SayanBarcha:
+https://github.com/SayanBarcha/Simple-Waves
+Usage reference: https://www.cssscript.com/animated-waves-svg/
+CSS Script lists the example as MIT. The supplied repository archive does
+not include a license file. This notice records the source and attribution.
+Local changes: scoped selectors, theme colors, fixed background placement,
+responsive sizing, pause controls, and reduced-motion support.

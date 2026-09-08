@@ -938,6 +938,15 @@ svg.social-icon[fill="none"] {
 [data-social="artstation"] {
   --social-color: #13aff0;
 }
+[data-social="tiktok"] {
+  --social-color: #25f4ee;
+}
+[data-social="imdb"] {
+  --social-color: #f5c518;
+}
+[data-social="globe"] {
+  --social-color: #7699b8;
+}
 .link-list a.social-button--icon-only {
   width: 9rem;
   height: 9rem;

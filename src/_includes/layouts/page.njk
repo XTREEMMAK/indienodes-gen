@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>{{ creator.creator }} — IndieNodes</title>
+		<title>{{ creator.creator }} | IndieNodes</title>
 		<meta name="description" content="{{ creator.why }}" />
 
 		{# How IndieNodes confirms this page belongs to the creator it names.
@@ -38,6 +38,9 @@
         {% if creator.theme.effects.cherryBlossoms %}
           <link rel="stylesheet" href="{{ assetRoot }}/css/blossoms.css" />
         {% endif %}
+        {% if creator.theme.effects.waves %}
+          <link rel="stylesheet" href="{{ assetRoot }}/css/waves.css" />
+        {% endif %}
         {% if creator.theme.effects.dustParticles %}
           <link rel="stylesheet" href="{{ assetRoot }}/css/dust.css" />
         {% endif %}
@@ -63,6 +66,9 @@
         {% endif %}
         {% if creator.theme.effects.dustParticles %}
           <canvas class="dust-particles" aria-hidden="true"></canvas>
+        {% endif %}
+        {% if creator.theme.effects.waves %}
+          {% include "components/waves.njk" %}
         {% endif %}
         <div class="page">
 			{% include "components/hero.njk" %}
@@ -101,9 +107,10 @@
               <circle cx="12" cy="12" r="3" />
             </svg>
           </button>
-          {% if creator.theme.effects.cherryBlossoms or creator.theme.effects.dustParticles %}
+          {% if creator.theme.effects.cherryBlossoms or creator.theme.effects.dustParticles or creator.theme.effects.waves %}
             <div class="fx-panel">
               <div class="fx-panel__list" id="fx-panel-list">
+                {% if creator.theme.effects.waves %}<button class="waves-toggle" hidden type="button" aria-pressed="false">Pause waves</button>{% endif %}
                 {% if creator.theme.effects.cherryBlossoms %}<button class="blossoms-toggle" hidden type="button" aria-pressed="false">Pause petals</button>{% endif %}
                 {% if creator.theme.effects.dustParticles %}<button class="dust-particles-toggle" hidden type="button" aria-pressed="false">Pause dust</button>{% endif %}
               </div>
@@ -119,9 +126,10 @@
 		<script src="{{ assetRoot }}/js/reveal.js" defer></script>
         {% if creator.cosplay.groups.length %}<script src="{{ assetRoot }}/js/tabs.js" defer></script>{% endif %}
         <script src="{{ assetRoot }}/js/bg-reveal.js" defer></script>
+        {% if creator.theme.effects.waves %}<script src="{{ assetRoot }}/js/waves.js" defer></script>{% endif %}
         {% if creator.theme.effects.cherryBlossoms %}<script src="{{ assetRoot }}/js/blossoms.js" defer></script>{% endif %}
         {% if creator.theme.effects.dustParticles %}<script src="{{ assetRoot }}/js/dust.js" defer></script>{% endif %}
-        {% if creator.theme.effects.cherryBlossoms or creator.theme.effects.dustParticles %}
+        {% if creator.theme.effects.cherryBlossoms or creator.theme.effects.dustParticles or creator.theme.effects.waves %}
           <script src="{{ assetRoot }}/js/fx-panel.js" defer></script>
         {% endif %}
         {% if creator.type == 'audio' and creator.sections.works and creator.tracks.length %}

@@ -36,3 +36,7 @@ opt out of glass with `theme.glassPanels: false`.
 The default footer places the creator’s own site on the first text line and
 the hosting credit on the second, with compact line spacing. The generated
 template omits the first line when no `source_url` is supplied.
+
+The shared icon set includes TikTok, IMDb, and a globe for other websites.
+Generated links use the globe when their label or explicit icon has no known
+platform mapping. The baseline includes examples of all three.
