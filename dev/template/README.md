@@ -1,53 +1,38 @@
-# `dev/template/` — HTML prototype
+# Shared design baseline
 
-This is where the page design gets settled before any of it goes through
-Eleventy. Plain HTML and CSS, no build step, no dependencies — open
-`index.html` directly with `file://` in a browser.
+This neutral sample audio page demonstrates the common layout, social links,
+waveform player and reveal animation. Jewel's individual design now lives in
+[`../creators/jewel/`](../creators/jewel/README.md).
 
-It is hardcoded to one sample creator (Jewel, `audio` type, three tracks) on
-purpose. There is no data file here and no templating; every value you see is
-literally in the markup. That is deliberate — this is the prototype, not the
-build, and the point is to argue about layout and CSS without a template
-engine in the way.
+Serve from the repository root:
 
-## What's real here
+```sh
+python3 -m http.server 8080 --directory dev
+```
 
-- `css/base.css` — tokens, reset, and every section's structure. Skin-
-  independent: a page linking only this file is complete and usable.
-- `css/skins/card.css` — the default skin, layered on top of `base.css`.
-  A skin is a stylesheet only; it never introduces markup or classes that
-  `base.css` doesn't already provide.
-- `css/fonts.css` + `fonts/*.woff2` — the two self-hosted variable fonts
-  (Space Grotesk, Karla), copied by value from `indienodes-web`.
-- The ring embed and verification meta tag in `index.html`'s `<head>` and
-  `<footer>` are the real snippets from `indienodes-app`'s widget (the
-  default `widget` tier, a sandboxed iframe) — not placeholders to be
-  designed later.
-- `js/reveal.js` — intro animation for each top-level section (fade-rise by
-  default, sequenced across the hero and grouped section content). Progressive
-  enhancement: the hidden pre-animation state only applies under a `.has-js`
-  class the script itself adds as its first line, so a page with JS blocked or
-  failing shows every section plainly rather than stuck invisible. Honors
-  `prefers-reduced-motion` both in the script (skips the observer entirely)
-  and in `base.css` (forces the visible end-state as a backstop).
-- `assets/` — placeholder media only: two generated SVGs standing in for a
-  profile photo and a background image, and three generated tone `.wav`
-  files standing in for tracks. None of it is meant to look or sound good;
-  it exists so the layout has something real to lay out.
+Open http://localhost:8080/template/ for the baseline or
+http://localhost:8080/creators/jewel/ for Jewel.
 
-## What happens next
+Shared assets live here so creator previews can reference them without
+copying CSS, fonts or JavaScript. The profile/background SVGs and tone WAVs
+are placeholders. Social links are platform homepages, not creator profiles.
 
-Once this reads right in both themes, at narrow and wide viewports, and with
-reduced motion on:
+Brand icons are Font Awesome Free 7.3.1; see `assets/icons/LICENSE.txt`.
+WaveSurfer 7.12.11 is self-hosted with its BSD license in `js/vendor/`.
+It decodes actual audio, retains native controls and requires HTTP for waves.
+Remote audio needs CORS access; file URLs retain basic native playback.
 
-1. `css/base.css` and `css/skins/card.css` move byte-for-byte into
-   `src/assets/css/`.
-2. `index.html`'s markup becomes `src/_includes/layouts/page.njk`, with
-   hardcoded values swapped for Nunjucks expressions reading from a
-   creator's YAML record.
-3. The per-type work modules (`art`, `comic`, `text`, `game`) that this
-   prototype's CSS already accounts for (see `.gallery`, `.pages`,
-   `.excerpt`, `.game__cover` in `base.css`) get their own markup partials,
-   proven against a second, differently-typed creator.
+The baseline has no cherry blossom or dust particle effect. Optional effects
+live in `../features/` and creator-specific overrides beside their previews.
+See [the development workflow](../README.md) for promoting approved changes
+into the generated template. Social icons, waveforms, cosplay tabs, the
+optional blossom/dust effects, and the site-controls background-reveal +
+effects drawer are also supported by the generated template.
 
-See the project plan for the full Eleventy scaffold this feeds into.
+Defaults: blurred glass panels, a left-aligned Elsewhere heading with centered
+links, and smooth transitions whenever tabs are present. Generated pages can
+opt out of glass with `theme.glassPanels: false`.
+
+The default footer places the creator’s own site on the first text line and
+the hosting credit on the second, with compact line spacing. The generated
+template omits the first line when no `source_url` is supplied.
