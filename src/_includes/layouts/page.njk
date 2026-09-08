@@ -38,6 +38,9 @@
         {% if creator.theme.effects.cherryBlossoms %}
           <link rel="stylesheet" href="{{ assetRoot }}/css/blossoms.css" />
         {% endif %}
+        {% if creator.theme.effects.dustParticles %}
+          <link rel="stylesheet" href="{{ assetRoot }}/css/dust.css" />
+        {% endif %}
         <style>
           {% if creator.theme.backgroundColor and (creator.theme.backgroundColor | regexMatch('^#[0-9a-fA-F]{6}$')) %}
           :root { --bg: {{ creator.theme.backgroundColor }}; }
@@ -49,6 +52,7 @@
         {% if creator.theme.glassPanels != false %}
           <link rel="stylesheet" href="{{ assetRoot }}/css/glass-panels.css" />
         {% endif %}
+        <link rel="stylesheet" href="{{ assetRoot }}/css/site-controls.css" />
 	</head>
 	<body data-type="{{ creator.type }}"{% if creator.theme.effects.blossomGlassGlow %} data-blossom-glow{% endif %}>
         {% if creator.theme.backgroundImage %}
@@ -56,10 +60,16 @@
         {% endif %}
 		{% if creator.theme.effects.cherryBlossoms %}
           <canvas class="blossoms" aria-hidden="true"></canvas>
-          <button class="blossoms-toggle" hidden type="button" aria-pressed="false">Pause petals</button>
+        {% endif %}
+        {% if creator.theme.effects.dustParticles %}
+          <canvas class="dust-particles" aria-hidden="true"></canvas>
         {% endif %}
         <div class="page">
 			{% include "components/hero.njk" %}
+
+			{% if creator.sections.about and creator.bio %}
+				{% include "components/about.njk" %}
+			{% endif %}
 
 			{% if creator.cosplay.groups.length %}
               <nav class="profile-tabs" data-tabs data-reveal aria-label="Creator interests">
@@ -67,27 +77,53 @@
               </nav>
               <div id="music">
             {% endif %}
-            {% if creator.sections.about and creator.bio %}
-				{% include "components/about.njk" %}
-			{% endif %}
 
 			{% if creator.sections.works %}
 				{% include "components/works/" + creator.type + ".njk" %}
-			{% endif %}
-
-			{% if creator.sections.links %}
-				{% include "components/links.njk" %}
 			{% endif %}
 
 			{% if creator.cosplay.groups.length %}
               </div>
               <div id="cosplay">{% include "components/cosplay.njk" %}</div>
             {% endif %}
+
+			{% if creator.sections.links %}
+				{% include "components/links.njk" %}
+			{% endif %}
+
             {% include "components/footer.njk" %}
 		</div>
+
+        <div class="site-controls">
+          <button class="bg-reveal-toggle" type="button" aria-pressed="false" aria-label="View background">
+            <svg class="control-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+          {% if creator.theme.effects.cherryBlossoms or creator.theme.effects.dustParticles %}
+            <div class="fx-panel">
+              <div class="fx-panel__list" id="fx-panel-list">
+                {% if creator.theme.effects.cherryBlossoms %}<button class="blossoms-toggle" hidden type="button" aria-pressed="false">Pause petals</button>{% endif %}
+                {% if creator.theme.effects.dustParticles %}<button class="dust-particles-toggle" hidden type="button" aria-pressed="false">Pause dust</button>{% endif %}
+              </div>
+              <button class="fx-panel-toggle" type="button" aria-expanded="false" aria-controls="fx-panel-list" aria-label="Effects">
+                <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m12 3-1.9 5.8a2 2 0 0 1-1.287 1.288L3 12l5.8 1.9a2 2 0 0 1 1.288 1.287L12 21l1.9-5.8a2 2 0 0 1 1.287-1.288L21 12l-5.8-1.9a2 2 0 0 1-1.288-1.287Z" />
+                </svg>
+              </button>
+            </div>
+          {% endif %}
+        </div>
+
 		<script src="{{ assetRoot }}/js/reveal.js" defer></script>
         {% if creator.cosplay.groups.length %}<script src="{{ assetRoot }}/js/tabs.js" defer></script>{% endif %}
+        <script src="{{ assetRoot }}/js/bg-reveal.js" defer></script>
         {% if creator.theme.effects.cherryBlossoms %}<script src="{{ assetRoot }}/js/blossoms.js" defer></script>{% endif %}
+        {% if creator.theme.effects.dustParticles %}<script src="{{ assetRoot }}/js/dust.js" defer></script>{% endif %}
+        {% if creator.theme.effects.cherryBlossoms or creator.theme.effects.dustParticles %}
+          <script src="{{ assetRoot }}/js/fx-panel.js" defer></script>
+        {% endif %}
         {% if creator.type == 'audio' and creator.sections.works and creator.tracks.length %}
           <script src="{{ assetRoot }}/js/vendor/wavesurfer.min.js" defer></script>
           <script src="{{ assetRoot }}/js/waveforms.js" defer></script>

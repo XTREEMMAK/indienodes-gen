@@ -20,6 +20,36 @@
   box-shadow: var(--glass-shadow);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
+  will-change: backdrop-filter;
+  transition:
+    opacity 450ms ease,
+    transform 450ms ease;
+}
+/* base.css fades .page itself for background-reveal, which works fine
+   with no backdrop-filter around. Once these panels have one, that ancestor
+   fade becomes a problem: non-1 opacity/a transform both make .page a new
+   backdrop root the instant the transition starts, cutting every panel's
+   backdrop-filter off from the real site-backdrop/particles behind it and
+   swapping their blur for a pop right as the fade begins. Neutralize .page
+   here and fade each panel's own opacity instead — an element fading its
+   own opacity doesn't touch what its backdrop-filter samples, so the blur
+   stays correct all the way to fully transparent. */
+[data-bg-reveal] .page {
+  opacity: 1;
+  transform: none;
+}
+/* !important: these same elements carry data-reveal/data-reveal="sequence"
+   for the on-load intro animation, and base.css's
+   .has-js [data-reveal="sequence"].is-visible rule (specificity 0,3,0,
+   beats this selector's 0,2,0) pins them at opacity:1/transform:none once
+   revealed — which is always, by the time anyone can click the toggle. */
+[data-bg-reveal] .hero__inner,
+[data-bg-reveal] .section,
+[data-bg-reveal] .profile-tabs,
+[data-bg-reveal] .site-footer {
+  opacity: 0 !important;
+  transform: scale(0.98) !important;
+  pointer-events: none;
 }
 .hero__inner,
 .section {

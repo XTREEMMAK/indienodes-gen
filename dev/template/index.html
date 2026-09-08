@@ -1,32 +1,11 @@
 <!doctype html>
-<!--
-	IndieNodes Gen — prototype template (dev/template/index.html)
-
-	This is the hand-authored prototype the Eleventy build gets adapted from,
-	not the build itself. It is hardcoded to one sample creator (audio type,
-	three tracks) on purpose, so the design gets settled here in plain HTML
-	before anything goes through a template engine. Open it directly with
-	file:// — no build step, no server required except for the <audio>
-	sources, which most browsers will still play from disk.
-
-	Once this looks right, css/base.css and css/skins/card.css move byte-for-
-	byte into src/assets/css/, and this markup becomes
-	src/_includes/layouts/page.njk with values swapped for Nunjucks
-	expressions. See the project plan for the full mapping.
-
-	Two things this page deliberately keeps even as a prototype, because they
-	are not stylistic and are easy to lose in translation:
-	  1. The ring embed and the verification meta tag are both server-rendered
-	     markup, not something a script inserts — a gen-hosted page IS the
-	     member's source_url, and the ring's participation checker reads
-	     served HTML without running JavaScript.
-	  2. Every external link opens in a new tab with rel="noopener noreferrer".
--->
+<!-- Shared audio design baseline. Creator experiments live in ../creators/.
+     Serve dev/ over HTTP for waveform decoding; see README.md. -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Jewel — IndieNodes</title>
+    <title>Sample Artist — IndieNodes</title>
     <meta
       name="description"
       content="Bedroom pop, recorded badly on purpose. A creator page hosted for the IndieNodes ring."
@@ -38,24 +17,26 @@
 
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/skins/card.css" />
+    <link rel="stylesheet" href="css/glass-panels.css" />
+    <link rel="stylesheet" href="css/site-controls.css" />
 
     <!-- A creator's chosen accent, inlined AFTER the stylesheet links so it
 		     wins. Gated at build time on /^#[0-9a-f]{6}$/i; an unset value
 		     emits nothing. Hardcoded here since this page has no build step. -->
     <style>
       :root {
-        --accent: #d7a9bc;
+        --accent: #b5502f;
       }
     </style>
   </head>
   <body data-type="audio">
+    <div
+      class="site-backdrop"
+      style="background-image: url(&quot;assets/background.svg&quot;)"
+      aria-hidden="true"
+    ></div>
     <div class="page">
       <header class="hero">
-        <div
-          class="hero__backdrop"
-          style="background-image: url(&quot;assets/background.svg&quot;)"
-          aria-hidden="true"
-        ></div>
         <div class="hero__inner" data-reveal="sequence">
           <img
             class="hero__portrait"
@@ -75,7 +56,7 @@
               </svg>
               Music
             </span>
-            <h1 class="hero__name" data-reveal-item>Jewel</h1>
+            <h1 class="hero__name" data-reveal-item>Sample Artist</h1>
             <p class="hero__why" data-reveal-item>
               Bedroom pop, recorded badly on purpose.
             </p>
@@ -89,7 +70,7 @@
       </header>
 
       <section
-        class="section"
+        class="section section--about"
         aria-labelledby="about-heading"
         data-reveal="sequence"
       >
@@ -97,10 +78,10 @@
           About
         </h2>
         <p class="prose" data-reveal-item>
-          Jewel writes and records everything alone in one room, on whatever's
-          closest — a phone mic more often than not. The songs are short, a
-          little unfinished on purpose, and meant to sound like they were made
-          by a person rather than polished by one.
+          Sample Artist writes and records everything alone in one room, on
+          whatever's closest — a phone mic more often than not. The songs are
+          short, a little unfinished on purpose, and meant to sound like they
+          were made by a person rather than polished by one.
         </p>
       </section>
 
@@ -137,7 +118,7 @@
       </section>
 
       <section
-        class="section"
+        class="section section--links"
         aria-labelledby="links-heading"
         data-reveal="sequence"
       >
@@ -147,13 +128,13 @@
         <a
           class="link-primary"
           data-reveal-item
-          href="https://jewel.example.com"
+          href="https://artist.example.com"
           target="_blank"
           rel="noopener noreferrer"
         >
           <span>
-            <span class="link-primary__label">Jewel's own site</span>
-            <span class="link-primary__url">jewel.example.com</span>
+            <span class="link-primary__label">Sample Artist's own site</span>
+            <span class="link-primary__url">artist.example.com</span>
           </span>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M7 17 17 7M9 7h8v8" />
@@ -164,12 +145,104 @@
             href="https://bandcamp.com"
             target="_blank"
             rel="noopener noreferrer"
+            ><span
+              class="social-icon"
+              style="--icon: url(&quot;assets/icons/bandcamp.svg&quot;)"
+              aria-hidden="true"
+            ></span
             >Bandcamp</a
+          >
+          <a
+            href="https://youtube.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span
+              class="social-icon"
+              style="--icon: url(&quot;assets/icons/youtube.svg&quot;)"
+              aria-hidden="true"
+            ></span
+            >YouTube</a
+          >
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span
+              class="social-icon"
+              style="--icon: url(&quot;assets/icons/facebook.svg&quot;)"
+              aria-hidden="true"
+            ></span
+            >Facebook</a
+          >
+          <a
+            href="https://open.spotify.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span
+              class="social-icon"
+              style="--icon: url(&quot;assets/icons/spotify.svg&quot;)"
+              aria-hidden="true"
+            ></span
+            >Spotify</a
+          >
+          <a href="https://bsky.app" target="_blank" rel="noopener noreferrer"
+            ><span
+              class="social-icon"
+              style="--icon: url(&quot;assets/icons/bluesky.svg&quot;)"
+              aria-hidden="true"
+            ></span
+            >Bluesky</a
+          >
+          <a
+            href="https://discord.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span
+              class="social-icon"
+              style="--icon: url(&quot;assets/icons/discord.svg&quot;)"
+              aria-hidden="true"
+            ></span
+            >Discord</a
+          >
+          <a href="https://x.com" target="_blank" rel="noopener noreferrer"
+            ><span
+              class="social-icon"
+              style="--icon: url(&quot;assets/icons/x-twitter.svg&quot;)"
+              aria-hidden="true"
+            ></span
+            >Twitter/X</a
+          >
+          <a
+            href="https://soundcloud.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span
+              class="social-icon"
+              style="--icon: url(&quot;assets/icons/soundcloud.svg&quot;)"
+              aria-hidden="true"
+            ></span
+            >SoundCloud</a
+          >
+          <a
+            href="https://artstation.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span
+              class="social-icon"
+              style="--icon: url(&quot;assets/icons/artstation.svg&quot;)"
+              aria-hidden="true"
+            ></span
+            >ArtStation</a
           >
           <a
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
+            ><span
+              class="social-icon"
+              style="--icon: url(&quot;assets/icons/instagram.svg&quot;)"
+              aria-hidden="true"
+            ></span
             >Instagram</a
           >
         </div>
@@ -182,7 +255,7 @@
 				     inline in the wrapper on purpose. -->
         <div class="ring-widget" style="display: flex; justify-content: center">
           <iframe
-            src="https://indienodes.us/embed-frame?site-id=audio-jewel"
+            src="https://indienodes.us/embed-frame?site-id=audio-sample"
             title="IndieNodes webring"
             width="260"
             height="150"
@@ -192,6 +265,15 @@
           ></iframe>
         </div>
         <p class="site-footer__note">
+          Sample Artist's own site is
+          <a
+            href="https://artist.example.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            >artist.example.com</a
+          >.
+        </p>
+        <p class="site-footer__note">
           Hosted for the
           <a
             href="https://indienodes.us"
@@ -199,16 +281,37 @@
             rel="noopener noreferrer"
             >IndieNodes</a
           >
-          ring by KJNet. Jewel's own site is
-          <a
-            href="https://jewel.example.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            >jewel.example.com</a
-          >.
+          ring by KJNet.
         </p>
       </footer>
     </div>
+
+    <div class="site-controls">
+      <button
+        class="bg-reveal-toggle"
+        type="button"
+        aria-pressed="false"
+        aria-label="View background"
+      >
+        <svg
+          class="control-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      </button>
+    </div>
+
     <script src="js/reveal.js" defer></script>
+    <script src="js/vendor/wavesurfer.min.js" defer></script>
+    <script src="js/waveforms.js" defer></script>
+    <script src="js/bg-reveal.js" defer></script>
   </body>
 </html>

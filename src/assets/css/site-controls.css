@@ -1,0 +1,81 @@
+/* Fixed bottom-right control stack: the background-reveal toggle and the
+   effects drawer share one flex column so added buttons stack instead of
+   overlapping. column-reverse keeps the first DOM child pinned to the
+   viewport corner as later items stack upward from it. */
+.site-controls {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 4;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.bg-reveal-toggle,
+.fx-panel-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+.bg-reveal-toggle[aria-pressed="true"],
+.fx-panel-toggle[aria-expanded="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-elevated);
+}
+.control-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  display: block;
+  fill: currentColor;
+}
+.control-icon[fill="none"] {
+  fill: none;
+  stroke: currentColor;
+}
+
+/* Drawer for per-effect buttons (pause petals, pause dust, ...). Collapsed
+   by default so a handful of optional effects never crowd the corner;
+   opening it slides the list up from behind its toggle. */
+.fx-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+.fx-panel__list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateY(0.5rem);
+  pointer-events: none;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+.fx-panel__list.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+/* Feature buttons style themselves for standalone use (fixed, corner-
+   anchored); neutralize that positioning once nested in the drawer. */
+.fx-panel__list > button {
+  position: static;
+}

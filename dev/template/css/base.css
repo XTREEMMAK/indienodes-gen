@@ -211,6 +211,7 @@ a:hover {
 }
 
 .has-js [data-reveal]:not([data-reveal="sequence"]),
+.has-js [data-reveal="sequence"],
 .has-js [data-reveal="sequence"] [data-reveal-item] {
   opacity: 0;
   transform: translateY(1.35rem);
@@ -223,6 +224,7 @@ a:hover {
 }
 
 .has-js [data-reveal].is-visible:not([data-reveal="sequence"]),
+.has-js [data-reveal="sequence"].is-visible,
 .has-js [data-reveal="sequence"].is-visible [data-reveal-item] {
   opacity: 1;
   transform: none;
@@ -304,17 +306,23 @@ a:hover {
 .section {
   margin-top: clamp(4rem, 8vw, 7rem);
 }
+/* The hero already carries generous bottom padding, so the section right
+   after it (an About that now sits outside the tabs) needs a much smaller
+   push than the rhythm between later sections. */
+.hero + .section {
+  margin-top: clamp(1rem, 3vw, 2rem);
+}
 
 .section__heading {
   display: flex;
   align-items: center;
   gap: 1.15rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
   color: var(--text-muted);
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
@@ -330,43 +338,72 @@ a:hover {
   max-width: 48rem;
   font-size: clamp(1.2rem, 2vw, 1.4rem);
   line-height: 1.72;
-  white-space: pre-line; /* creator bios are plain text with real line breaks */
+}
+
+.section--about .prose {
+  max-width: none;
 }
 
 /* ----------------------------------------------------------------- hero -- */
 
 .hero {
   position: relative;
-  padding-block: clamp(4.5rem, 10vw, 8rem) clamp(2.5rem, 5vw, 4.5rem);
+  padding-block: clamp(4.5rem, 10vw, 8rem) clamp(1.25rem, 2.5vw, 2rem);
 }
 
-/* The creator's background image, when set. Sits behind the hero only, never
-   the whole page: a full-page background image is the fastest way to make
-   text unreadable and it is not a knob worth offering.
-
-   Deliberately NOT a [data-reveal] target: its soft, page-bleeding fade is a
-   plain CSS animation while the foreground hero content uses the sequenced
-   fade-rise. The backdrop overshoots BELOW .hero's own bottom edge on purpose
-   so its gradient has room to finish rather than being cut off at the edge. */
+/* Fixed viewport backdrop, outside animated content so scrolling and reveal
+   transforms cannot move it. Keep the existing fade-in timing. */
+body {
+  isolation: isolate;
+}
+.page {
+  position: relative;
+  z-index: 1;
+  transition:
+    opacity 450ms ease,
+    transform 450ms ease;
+}
+/* Default background-reveal fade: works standalone (no glass-panels.css)
+   since .page has no backdrop-filter descendants here to disturb. When
+   glass panels are active, glass-panels.css overrides this and fades each
+   panel's own opacity instead — see the comment there for why. */
+[data-bg-reveal] .page {
+  opacity: 0;
+  transform: scale(0.98);
+  pointer-events: none;
+}
+.site-backdrop,
 .hero__backdrop {
-  position: absolute;
+  position: fixed;
   z-index: -1;
-  inset: 0 auto -8rem 50%;
-  width: 100vw;
-  transform: translateX(-50%);
-  background-position: center;
+  inset: 0;
+  pointer-events: none;
+  background-position: bottom left;
   background-size: cover;
-  opacity: 0.28;
-  mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 100%);
+  background-repeat: no-repeat;
+  opacity: 0.55;
+  filter: brightness(1.15);
+  transition: opacity 450ms ease;
   animation: hero-backdrop-in 1100ms ease-out both;
 }
-
+/* The 0.55 opacity above is what tints the image with the page's --bg
+   color underneath (a dark wash in dark mode) — full reveal just lifts
+   that scrim rather than pushing brightness past the site's own look. */
+[data-bg-reveal] .site-backdrop {
+  opacity: 1;
+}
 @keyframes hero-backdrop-in {
   from {
     opacity: 0;
   }
   to {
-    opacity: 0.28;
+    opacity: 0.55;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-backdrop,
+  .hero__backdrop {
+    animation: none;
   }
 }
 
@@ -680,5 +717,249 @@ a:hover {
   .link-primary {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+.site-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.link-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.social-icon {
+  display: inline-block;
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+.waveform {
+  margin: 0.75rem 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+.photo-credit {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+.profile-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.75rem;
+}
+.profile-tabs a {
+  padding: 0.65rem 1.3rem;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition:
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+.profile-tabs a[aria-selected="true"] {
+  background: var(--bg-elevated);
+  border-color: var(--accent);
+  font-weight: 700;
+}
+@media (hover: hover) {
+  .profile-tabs a:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+}
+.profile-tabs a:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.cosplay-contact {
+  margin-top: 1rem;
+}
+.cosplay-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.cosplay-group {
+  padding: 1.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.cosplay-group h3 {
+  font-size: 1.1rem;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+.cosplay-group ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.cosplay-group li + li {
+  margin-top: 0.35rem;
+}
+.cosplay-group p {
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Profile and destination layout. */
+.hero__portrait {
+  width: 200px;
+  height: 200px;
+}
+.section--links {
+  text-align: center;
+}
+.section--links .section__heading {
+  justify-content: flex-start;
+  text-align: left;
+}
+.section--links .link-primary {
+  justify-content: center;
+}
+.section--links .link-list {
+  justify-content: center;
+}
+.section--links .link-primary {
+  align-items: center;
+}
+.site-footer__note + .site-footer__note {
+  margin-top: 0.15rem;
+}
+.site-footer__note {
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+/* Social buttons: subtle feedback for pointer and keyboard interaction. */
+.link-list a {
+  transition:
+    transform 180ms ease-out,
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+.link-list a:focus-visible {
+  background-color: color-mix(in srgb, var(--accent) 18%, var(--bg-elevated));
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+@media (hover: hover) {
+  .link-list a:hover {
+    transform: translateY(-3px);
+    background-color: color-mix(in srgb, var(--accent) 18%, var(--bg-elevated));
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+  }
+}
+.link-list a:active {
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .link-list a {
+    transition: none;
+  }
+  .link-list a:hover {
+    transform: none;
+  }
+}
+
+/* Inline brand SVGs avoid stylesheet-relative mask URLs in exported sites. */
+svg.social-icon {
+  background: none;
+  mask: none;
+  -webkit-mask: none;
+  fill: currentColor;
+}
+svg.social-icon[fill="none"] {
+  fill: none;
+  stroke: currentColor;
+}
+.link-list a[data-social] {
+  color: var(--social-color);
+  background: color-mix(in srgb, var(--bg-elevated) 72%, transparent);
+  border-color: var(--social-color);
+}
+.link-list a[data-social]:is(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--social-color) 20%, var(--bg-elevated));
+  border-color: var(--social-color);
+  box-shadow: 0 8px 24px
+    color-mix(in srgb, var(--social-color) 28%, transparent);
+}
+[data-social="bluesky"] {
+  --social-color: #c3fafa;
+}
+[data-social="youtube"] {
+  --social-color: #ff4d4d;
+}
+[data-social="instagram"] {
+  --social-color: #ff99ef;
+}
+[data-social="spotify"] {
+  --social-color: #89f578;
+}
+[data-social="applemusic"] {
+  --social-color: #f7d5d5;
+}
+[data-social="email"] {
+  --social-color: #e9ed37;
+}
+[data-social="cv"] {
+  --social-color: #c046eb;
+}
+[data-social="bandcamp"] {
+  --social-color: #629aa9;
+}
+[data-social="facebook"] {
+  --social-color: #1877f2;
+}
+[data-social="discord"] {
+  --social-color: #5865f2;
+}
+[data-social="x-twitter"] {
+  --social-color: #888888;
+}
+[data-social="soundcloud"] {
+  --social-color: #ff7700;
+}
+[data-social="artstation"] {
+  --social-color: #13aff0;
+}
+.link-list a.social-button--icon-only {
+  width: 9rem;
+  height: 9rem;
+  padding: 0;
+  border-radius: 2.75rem;
+  justify-content: center;
+  flex: none;
+}
+.social-button--icon-only .social-icon {
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+@media (max-width: 34rem) {
+  .link-list a.social-button--icon-only {
+    width: 6.5rem;
+    height: 6.5rem;
+    border-radius: 2rem;
+  }
+
+  .social-button--icon-only .social-icon {
+    width: 3.25rem;
+    height: 3.25rem;
   }
 }

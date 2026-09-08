@@ -1,0 +1,35 @@
+/* Optional effect: keep motes below content and above the page background. */
+.page {
+  position: relative;
+  z-index: 1;
+}
+
+.dust-particles {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.dust-particles-toggle {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 3;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dust-particles,
+  .dust-particles-toggle {
+    display: none;
+  }
+}
