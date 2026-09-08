@@ -1,0 +1,21 @@
+<section class="section" aria-labelledby="more-works-heading" data-reveal="sequence">
+	<h2 class="section__heading" id="more-works-heading" data-reveal-item>More works</h2>
+	{# Not run through the "sampler" `capped` filter (see .eleventy.js) — this
+	   tab is an explicit second catalog alongside the capped Music sampler,
+	   not another sampler itself. #}
+	{% for group in creator.more_works %}
+		<div class="works-grid-group" data-reveal-item>
+			<h3 class="works-grid-group__label">{{ group.category }}</h3>
+			<div class="works-grid">
+				{% for work in group.items %}
+					<a class="works-grid__item" href="{{ work.link }}" target="_blank" rel="noopener noreferrer">
+						<span class="works-grid__cover">
+							<img src="{{ work.cover_url }}" alt="" loading="lazy" />
+						</span>
+						<span class="works-grid__title">{{ work.title }}</span>
+					</a>
+				{% endfor %}
+			</div>
+		</div>
+	{% endfor %}
+</section>

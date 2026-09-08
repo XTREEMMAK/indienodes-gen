@@ -75,6 +75,16 @@
     }
     if (focus) tabs[index].focus();
   }
+  // Brings the tab strip to the top of the viewport on user-driven switches
+  // (click, arrow keys, hash navigation) — but never on the initial `sync()`
+  // below, which would otherwise yank a page that loaded with a #hash
+  // straight past its own hero.
+  function scrollToNav() {
+    nav.scrollIntoView({
+      behavior: motion.matches ? "auto" : "smooth",
+      block: "start",
+    });
+  }
   tabs.forEach((tab, i) => {
     tab.id = "tab-" + panels[i].id;
     tab.setAttribute("role", "tab");
@@ -86,6 +96,7 @@
       event.preventDefault();
       activate(i);
       history.replaceState(null, "", tab.hash);
+      scrollToNav();
     });
     tab.addEventListener("keydown", (event) => {
       let next;
@@ -97,6 +108,7 @@
       event.preventDefault();
       activate(next, true);
       history.replaceState(null, "", tabs[next].hash);
+      scrollToNav();
     });
   });
   const sync = () =>
@@ -106,6 +118,9 @@
         tabs.findIndex((tab) => tab.hash === location.hash),
       ),
     );
-  addEventListener("hashchange", sync);
+  addEventListener("hashchange", () => {
+    sync();
+    scrollToNav();
+  });
   sync();
 })();

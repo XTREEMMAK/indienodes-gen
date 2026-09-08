@@ -77,9 +77,11 @@
 				{% include "components/about.njk" %}
 			{% endif %}
 
-			{% if creator.cosplay.groups.length %}
+			{% set hasCosplayTab = creator.cosplay.groups.length %}
+            {% set hasMoreWorksTab = creator.more_works.length %}
+            {% if hasCosplayTab or hasMoreWorksTab %}
               <nav class="profile-tabs" data-tabs data-reveal aria-label="Creator interests">
-                <a href="#music">Music</a><a href="#cosplay">Cosplay</a>
+                <a href="#music">Music</a>{% if hasCosplayTab %}<a href="#cosplay">Cosplay</a>{% endif %}{% if hasMoreWorksTab %}<a href="#more-works">More Works</a>{% endif %}
               </nav>
               <div id="music">
             {% endif %}
@@ -88,9 +90,14 @@
 				{% include "components/works/" + creator.type + ".njk" %}
 			{% endif %}
 
-			{% if creator.cosplay.groups.length %}
+			{% if hasCosplayTab or hasMoreWorksTab %}
               </div>
+            {% endif %}
+            {% if hasCosplayTab %}
               <div id="cosplay">{% include "components/cosplay.njk" %}</div>
+            {% endif %}
+            {% if hasMoreWorksTab %}
+              <div id="more-works">{% include "components/more-works.njk" %}</div>
             {% endif %}
 
 			{% if creator.sections.links %}
@@ -124,7 +131,7 @@
         </div>
 
 		<script src="{{ assetRoot }}/js/reveal.js" defer></script>
-        {% if creator.cosplay.groups.length %}<script src="{{ assetRoot }}/js/tabs.js" defer></script>{% endif %}
+        {% if creator.cosplay.groups.length or creator.more_works.length %}<script src="{{ assetRoot }}/js/tabs.js" defer></script>{% endif %}
         <script src="{{ assetRoot }}/js/bg-reveal.js" defer></script>
         {% if creator.theme.effects.waves %}<script src="{{ assetRoot }}/js/waves.js" defer></script>{% endif %}
         {% if creator.theme.effects.cherryBlossoms %}<script src="{{ assetRoot }}/js/blossoms.js" defer></script>{% endif %}

@@ -549,6 +549,67 @@ body {
   font-weight: 600;
 }
 
+/* more-works — a second, uncapped catalog (see components/more-works.njk),
+   shown in its own tab rather than folded into the capped Music sampler. */
+.works-grid-group + .works-grid-group {
+  margin-top: 2rem;
+}
+
+.works-grid-group__label {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.works-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.25rem;
+}
+
+.works-grid__item {
+  display: block;
+  width: 9.5rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.works-grid__cover {
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.works-grid__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.works-grid__item:hover .works-grid__cover img,
+.works-grid__item:focus-visible .works-grid__cover img {
+  transform: scale(1.05);
+}
+
+.works-grid__title {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-faint);
+  transition: color 0.25s ease;
+}
+
+.works-grid__item:hover .works-grid__title,
+.works-grid__item:focus-visible .works-grid__title {
+  color: var(--text);
+}
+
 /* comic — pages read at full width, stacked, in order. */
 .pages figure {
   margin: 0;
