@@ -1,5 +1,5 @@
 import { load as parseYaml } from "js-yaml";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 
 const CREATORS_DIR = "src/creators";
 const CREATOR_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -29,6 +29,58 @@ function getBuildCreatorSlugs() {
 
 export default function (eleventyConfig) {
   const creatorSlugs = getBuildCreatorSlugs();
+  const buildAll = process.env.INDIENODES_BUILD_CREATOR === "*";
+  eleventyConfig.addGlobalData("buildAll", buildAll);
+  eleventyConfig.addGlobalData("publicRoot", buildAll ? "/" : "");
+  eleventyConfig.addGlobalData(
+    "assetRoot",
+    buildAll ? "/assets" : "assets/shared",
+  );
+  eleventyConfig.addFilter("socialIcon", (label) => {
+    const key = String(label || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
+    const icons = {
+      bandcamp: "bandcamp",
+      youtube: "youtube",
+      facebook: "facebook",
+      spotify: "spotify",
+      bluesky: "bluesky",
+      discord: "discord",
+      twitter: "x-twitter",
+      x: "x-twitter",
+      twitterx: "x-twitter",
+      soundcloud: "soundcloud",
+      artstation: "artstation",
+      instagram: "instagram",
+      applemusic: "applemusic",
+      email: "email",
+      cv: "cv",
+    };
+    return Object.hasOwn(icons, key) ? icons[key] : "";
+  });
+  // Inline only our bundled SVGs, never arbitrary YAML paths or markup.
+  const iconNames = new Set(
+    readdirSync("src/assets/icons").filter((name) => name.endsWith(".svg")),
+  );
+  eleventyConfig.addFilter("socialSvg", (icon) => {
+    const filename = `${icon}.svg`;
+    if (!iconNames.has(filename)) return "";
+    return readFileSync(`src/assets/icons/${filename}`, "utf8").replace(
+      "<svg ",
+      '<svg class="social-icon" aria-hidden="true" focusable="false" ',
+    );
+  });
+  // Allow emphasis in biographies without accepting arbitrary HTML.
+  eleventyConfig.addFilter("bioText", (value) =>
+    String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>"),
+  );
 
   eleventyConfig.addDataExtension("yaml", (contents) => parseYaml(contents));
 
@@ -50,17 +102,23 @@ export default function (eleventyConfig) {
   // built-in typeof check.
   eleventyConfig.addFilter("isString", (value) => typeof value === "string");
 
-  eleventyConfig.addPassthroughCopy("src/assets");
-  // Ships each creator's own assets alongside their page, so `_site/<slug>/`
-  // is a self-contained folder: `assets/profile.webp` inside creator.yaml
-  // resolves relatively and the whole folder can be handed to the creator
-  // or moved to another host without touching a path.
-  // Copy only assets, never creator.yaml. The normal build wrapper narrows
-  // this list to the requested creator before Eleventy starts.
+  eleventyConfig.addPassthroughCopy({
+    "src/assets": buildAll ? "assets" : "assets/shared",
+  });
+  // Creator media stays relative to its page: root for standalone builds,
+  // <slug>/ for multi-creator deployments. Shared assets have a separate
+  // namespace in standalone output to prevent media filename collisions.
   for (const slug of creatorSlugs) {
     const assetsDir = `${CREATORS_DIR}/${slug}/assets`;
     if (existsSync(assetsDir)) {
-      eleventyConfig.addPassthroughCopy({ [assetsDir]: `${slug}/assets` });
+      if (!buildAll && existsSync(`${assetsDir}/shared`)) {
+        throw new Error(
+          "Creator assets/shared is reserved for shared template assets in standalone builds.",
+        );
+      }
+      eleventyConfig.addPassthroughCopy({
+        [assetsDir]: buildAll ? `${slug}/assets` : "assets",
+      });
     }
   }
   eleventyConfig.addPassthroughCopy({ "src/favicon-16.png": "favicon-16.png" });

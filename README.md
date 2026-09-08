@@ -138,13 +138,23 @@ Build one creator locally while their ignored media files are present:
 npm run build -- --creator jewel
 ```
 
-The build first verifies that locally referenced audio exists, clears stale `_site/`
-output, and writes the selected page to `_site/jewel/`. A single-creator build also zips
-the whole output — that creator's own page plus the shared chrome it needs to render — to
-`dist/jewel.zip`, since `_site/` at that point already contains nothing but that one
-creator: a self-contained bundle to hand off or drop onto any static host as-is. Publish
-`_site/` using the KJNet deployment process. There is deliberately no remote build action
-because creator audio is not stored in Git.
+The build verifies local audio, clears stale `_site/` output, and writes the
+selected creator directly to `_site/index.html`. `dist/jewel.zip` contains:
+
+```text
+index.html          # Jewel's page
+assets/             # Jewel's media
+  shared/           # Shared CSS, scripts, fonts and icons
+favicon-16.png
+favicon-32.png
+```
+
+Extract the ZIP into the static host's web root or a subdirectory such as
+`/jewel/`. Standalone shared assets and fallback favicons use relative URLs. `assets/shared/` is reserved and cannot be used for creator
+media. The same root layout is used by single-creator development serving.
+The all-creator build retains the landing page, shared `assets/`, and
+`<creator>/` folders. There is no remote build action because creator audio
+is not stored in Git.
 
 A full rebuild must be requested explicitly:
 

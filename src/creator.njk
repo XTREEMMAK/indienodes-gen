@@ -3,6 +3,6 @@ pagination:
   data: creators
   size: 1
   alias: creator
-permalink: "{{ creator.slug }}/"
+permalink: "{% if buildAll %}{{ creator.slug }}/{% else %}index.html{% endif %}"
 layout: layouts/page.njk
 ---

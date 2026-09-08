@@ -1,4 +1,10 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+} from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { load as parseYaml } from "js-yaml";
@@ -163,21 +169,14 @@ if (selection.serve) {
   console.log(
     selection.all
       ? "Built all creators into _site/."
-      : `Built creator "${selection.creator}" into _site/${selection.creator}/.`,
+      : `Built creator "${selection.creator}" at _site/index.html.`,
   );
 
-  // A single-creator build's _site/ is already scoped to just that creator
-  // (their own folder plus the shared chrome assets needed to render it —
-  // see getBuildCreatorSlugs in .eleventy.js), so the whole directory is
-  // exactly the self-contained bundle for them. --all has no one creator to
-  // name the archive after, so it's left as a plain directory for KJNet's
-  // own deployment process instead.
+  // Standalone output is already rooted at the creator page. Archive it as-is.
   if (!selection.all) {
     mkdirSync(distDir, { recursive: true });
     const zipPath = path.join(distDir, `${selection.creator}.zip`);
     zipDirectory(outputDir, zipPath);
-    console.log(
-      `Zipped it to ${path.relative(projectRoot, zipPath)}.`,
-    );
+    console.log(`Zipped it to ${path.relative(projectRoot, zipPath)}.`);
   }
 }
